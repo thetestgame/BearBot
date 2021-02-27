@@ -1,0 +1,95 @@
+#
+
+name: Build, Test, and Release
+on:
+  schedule:
+    - cron: "0 10 * * *" # everyday at 10am
+  pull_request:
+    branches: master
+  push:
+    branches: master
+    tags:
+      - v*
+
+jobs:
+  #
+  test-solution:
+    name: Perform Solution Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+  #
+  build-docker-image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test-solution
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        id: prepare
+        run: |
+          DOCKER_IMAGE=thetestgame/bearbot
+          DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
+          VERSION=edge
+
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            VERSION=nightly
+          fi
+
+          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
+          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+            TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
+          fi
+
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+            --build-arg VERSION=${VERSION} \
+            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+            --build-arg VCS_REF=${GITHUB_SHA::8} \
+            ${TAGS} --file ./BearDen.BearBot.Service/Dockerfile ./
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+      - name: Docker Buildx (build)
+        run: |
+          docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
+      - name: Login to DockerHub
+        if: success() && github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker Buildx (push)
+        if: success() && github.event_name != 'pull_request'
+        run: |
+          docker buildx build --output "type=image,push=true" ${{ steps.prepare.outputs.buildx_args }}
+      - name: Inspect image
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
+
+  #
+  create-sentry-release:
+    name: Create Sentry Release
+    runs-on: ubuntu-latest
+    needs: build-docker-image
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Create a Sentry.io release
+        uses: tclindner/sentry-releases-action@v1.2.0
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: thetestgame
+          SENTRY_PROJECT: bearbot
+        with:
+          tagName: ${{ github.sha }}
+          environment: production
+          releaseNamePrefix: bearbot@

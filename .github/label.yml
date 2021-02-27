@@ -1,0 +1,8 @@
+# This file is used by the automatic Labeler Github Actions workflow
+# for organizing and sorting pull requests inside the repository
+# for project management.
+
+# Add 'devops' label to any change within folders relating to DevOps
+devops:
+  - .github/workflows/*
+  - .github/*.yml

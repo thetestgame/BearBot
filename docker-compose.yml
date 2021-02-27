@@ -1,0 +1,9 @@
+version: "3.4"
+
+services:
+  bearbot-discord:
+    image: bearbot-discord
+    env_file: bearbot.debug.env
+    build:
+      context: .
+      dockerfile: BearDen.BearBot.Service/Dockerfile

@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.vs": true,
+        "**/obj/": true,
+        "**/Obj/": true,
+        "**/bin/": true
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
+}
