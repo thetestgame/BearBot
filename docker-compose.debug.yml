@@ -5,7 +5,7 @@ services:
     image: bearbot-discord
     build:
       context: .
-      dockerfile: BearDen.BearBot.Service/Dockerfile
+      dockerfile: ./Dockerfile
     env_file: bearbot.debug.env
     volumes:
       - ~/.vsdbg:/remote_debugger:rw

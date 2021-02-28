@@ -16,21 +16,21 @@ namespace BearDen.BearBot.Service.Services
     /// </summary>
     public class CommandHandlingService
     {
-        private readonly CommandService _commands;
-        private readonly DiscordSocketClient _discord;
-        private readonly IServiceProvider _services;
+        private readonly CommandService commands;
+        private readonly DiscordSocketClient discord;
+        private readonly IServiceProvider services;
 
         public CommandHandlingService(IServiceProvider services)
         {
-            _commands = services.GetRequiredService<CommandService>();
-            _discord = services.GetRequiredService<DiscordSocketClient>();
-            _services = services;
+            this.commands = services.GetRequiredService<CommandService>();
+            this.discord = services.GetRequiredService<DiscordSocketClient>();
+            this.services = services;
 
             // Hook CommandExecuted to handle post-command-execution logic.
-            _commands.CommandExecuted += CommandExecutedAsync;
+            this.commands.CommandExecuted += CommandExecutedAsync;
             // Hook MessageReceived so we can process each message to see
             // if it qualifies as a command.
-            _discord.MessageReceived += MessageReceivedAsync;
+            this.discord.MessageReceived += MessageReceivedAsync;
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace BearDen.BearBot.Service.Services
         public async Task InitializeAsync()
         {
             // Register modules that are public and inherit ModuleBase<T>.
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await this.commands.AddModulesAsync(Assembly.GetEntryAssembly(), this.services);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -57,13 +57,13 @@ namespace BearDen.BearBot.Service.Services
 
             // Perform a basic check to verify the incoming message is a command invocation 
             var argPos = 0;
-            if (!message.HasCharPrefix('!', ref argPos) && (!message.HasMentionPrefix(_discord.CurrentUser, ref argPos))) return;
+            if (!message.HasCharPrefix('!', ref argPos) && (!message.HasMentionPrefix(this.discord.CurrentUser, ref argPos))) return;
 
-            var context = new SocketCommandContext(_discord, message);
+            var context = new SocketCommandContext(this.discord, message);
             // Perform the execution of the command. In this method,
             // the command service will perform precondition and parsing check
             // then execute the command if one is matched.
-            await _commands.ExecuteAsync(context, argPos, _services);
+            await this.commands.ExecuteAsync(context, argPos, this.services);
             // Note that normally a result will be returned by this format, but here
             // we will handle the result in CommandExecutedAsync,
         }

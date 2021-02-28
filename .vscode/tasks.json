@@ -1,7 +1,6 @@
 {
     "version": "2.0.0",
-    "tasks": [
-        {
+    "tasks": [{
             "label": "build",
             "command": "dotnet",
             "type": "process",
@@ -47,7 +46,7 @@
             "dockerBuild": {
                 "tag": "beardenbearbot:dev",
                 "target": "base",
-                "dockerfile": "${workspaceFolder}/BearDen.BearBot.Service/Dockerfile",
+                "dockerfile": "${workspaceFolder}/Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
@@ -63,7 +62,7 @@
             ],
             "dockerBuild": {
                 "tag": "beardenbearbot:latest",
-                "dockerfile": "${workspaceFolder}/BearDen.BearBot.Service/Dockerfile",
+                "dockerfile": "${workspaceFolder}/Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
