@@ -29,7 +29,6 @@ namespace BearDen.BearBot.Service.Modules
             var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
-                Description = "These are the commands you can use"
             };
 
             foreach (var module in _service.Modules)
@@ -39,14 +38,19 @@ namespace BearDen.BearBot.Service.Modules
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        description += $"!{cmd.Aliases.First()} - {cmd.Summary}\n";
+                    {
+                        if (cmd.Parameters.Count > 0)
+                            description += $"!{cmd.Aliases.First()} <{string.Join(", ", cmd.Parameters.Select(p => p.Name))}> - {cmd.Summary}\n";
+                        else
+                            description += $"!{cmd.Aliases.First()} - {cmd.Summary}\n";
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))
                 {
                     builder.AddField(x =>
                     {
-                        x.Name = module.Name;
+                        x.Name = $"{module.Name} - {module.Summary}";
                         x.Value = description;
                         x.IsInline = false;
                     });

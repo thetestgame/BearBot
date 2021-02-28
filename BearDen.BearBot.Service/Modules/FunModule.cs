@@ -13,6 +13,8 @@ namespace BearDen.BearBot.Service.Modules
     /// <summary>
     /// 
     /// </summary>
+    [Name("Fun")]
+    [Summary("Silly Extra Commands")]
     [RequireContext(ContextType.Guild)]
     public class FunModule : ModuleBase<SocketCommandContext>
     {
@@ -25,6 +27,13 @@ namespace BearDen.BearBot.Service.Modules
         public Task Say([Remainder] string text)
             => ReplyAsync(text);
 
+        [Command("roll")]
+        [Summary("Rolls a random number between a and b")]
+        public async Task Roll(int a, int b) 
+        {
+            int output = RandomService.Next(a, b);
+            await ReplyAsync($"You rolled: {output}");
+        }
 
         #region Yeet Command
         [Command("yeet"), Priority(1)]
@@ -38,8 +47,9 @@ namespace BearDen.BearBot.Service.Modules
             else if (user.Id == Context.Client.CurrentUser.Id) // User A -> Yeets -> Discord Bot Invocation
             {
                 string[] possibleMessages = new string[] {
-                    "*Is Yeeted*",
+                    "*Is yeeted*",
                     "Weeeeee",
+                    "*Tumbles through the air*",
                     "https://tenor.com/view/yeet-lion-king-simba-rafiki-throw-gif-16194362"
                 };
 
