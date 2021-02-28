@@ -6,10 +6,22 @@ on:
   #  - cron: "0 10 * * *" # everyday at 10am
   pull_request:
     branches: master
+    paths:
+      - BearDen.BearBot.*/
+      - bearbot.*
+      - docker-*.yml
+      - Dockerfile
+      - github.workflows/primary.yml
   push:
     branches: master
     tags:
       - v*
+    paths:
+      - BearDen.BearBot.*/
+      - bearbot.*
+      - docker-*.yml
+      - Dockerfile
+      - github.workflows/primary.yml
 
 jobs:
   #
