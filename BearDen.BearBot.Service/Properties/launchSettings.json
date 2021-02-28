@@ -3,7 +3,7 @@
     "BearDen.BearBot.Service": {
       "commandName": "Project",
       "environmentVariables": {
-        "bot-token": "NTc5OTA1MTQyOTk3MTIzMDcy.XOI8wA.IFp3cHBFz2HlLwt5hdklwNdleoE"
+        "BOT_TOKEN": "NTc5OTA1MTQyOTk3MTIzMDcy.XOI8wA.IFp3cHBFz2HlLwt5hdklwNdleoE"
       }
     },
     "Docker": {
