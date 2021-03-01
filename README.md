@@ -2,3 +2,7 @@
 
 BearBot
 =======
+
+[![CI on Push and Pull Request](https://github.com/thetestgame/BearBot/actions/workflows/ci.yml/badge.svg)](https://github.com/thetestgame/BearBot/actions/workflows/ci.yml)
+
+BearBot is a custom C# Discord bot for the BearDen community server.
