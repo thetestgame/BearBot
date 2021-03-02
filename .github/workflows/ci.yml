@@ -1,18 +1,55 @@
+# Primary workflow for building, testing, and deploying the BearBot application. This
+# file responds to push request and pull requests on the master repository branch.
 name: CI on Push and Pull Request
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-  build-and-publish-head:
+  # Builds and performs unit tests on the application solution
+  test:
+    name: Build and run Unit Tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Build and Publish head Docker image
-      uses: VaultVulp/gp-docker-action@1.1.7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        image-name: bearbot
-        image-tag: latest
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+  # Builds the Docker image for Github Packages
+  build-and-publish-latest-package:
+    name: Build and publish Github Package
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/master' # Running this job only for master branch
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and Publish latest Docker image
+        uses: VaultVulp/gp-docker-action@1.1.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
+          image-name: bearbot
+          image-tag: latest
+
+  # Builds the Docker image for Github Packages based on git tags
+  build-and-publish-tag-package:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') # Running this job only for tags
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and Publish Tag Docker image
+        uses: VaultVulp/gp-docker-action@1.1.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
+          image-name: bearbotmy-bearbot-service
+          extract-git-tag: true # Provide flag to extract Docker image tag from git reference
