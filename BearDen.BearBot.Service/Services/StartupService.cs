@@ -36,7 +36,7 @@ namespace BearDen.BearBot.Service.Services
 
         public async Task StartAsync()
         {
-            string discordToken = "NDQyMDU2NzU3Mzg1MTAxMzEy.Wuy_bw.83CaU82aGcoqBNOCUsJ_wWERaHk";// Environment.GetEnvironmentVariable(Constants.BotTokenEnvironmentKey); // Get the discord token from the environment variable
+            string discordToken = Environment.GetEnvironmentVariable(Constants.BotTokenEnvironmentKey); // Get the discord token from the environment variable
             await this.discord.LoginAsync(TokenType.Bot, discordToken);                                 // Login to discord
             await this.discord.StartAsync();                                                            // Connect to the websocket
 
