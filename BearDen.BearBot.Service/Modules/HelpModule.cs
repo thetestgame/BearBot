@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace BearDen.BearBot.Service.Modules
 {
     [Name("Help")]
-    [Summary("Provides helpful information about the available commands")]
+    [Summary("Provides helpful information about the bot and available commands")]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;
@@ -22,9 +22,27 @@ namespace BearDen.BearBot.Service.Modules
             _config = config;
         }
 
+        [Command("bot")]
+        [Summary("Provides information about the bot")]
+        public async Task Bot()
+        {
+            string message = string.Empty;
+            message += "BearBot is a custom C# Discord bot for the BearDen community server.\n";
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(114, 137, 218),
+            };
+            builder.AddField("Source", "https://github.com/thetestgame/BearBot");
+            builder.AddField("Developers", "thetestgame");
+            builder.AddField("Version", Constants.BotVersion);
+
+            await ReplyAsync(message, false, builder.Build());
+        }
+
         [Command("help")]
         [Summary("Provides helpful information about the available commands")]
-        public async Task HelpAsync()
+        public async Task Help()
         {
             var builder = new EmbedBuilder()
             {
@@ -62,7 +80,7 @@ namespace BearDen.BearBot.Service.Modules
 
         [Command("help")]
         [Summary("Provides helpful information about a specific command")]
-        public async Task HelpAsync(string command)
+        public async Task Help(string command)
         {
             var result = _service.Search(Context, command);
 
