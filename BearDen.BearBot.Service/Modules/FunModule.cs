@@ -27,13 +27,20 @@ namespace BearDen.BearBot.Service.Modules
         public Task Say([Remainder] string text)
             => ReplyAsync(text);
 
-        [Command("roll")]
+        #region Roll Command
+        [Command("roll"), Priority(1)]
         [Summary("Rolls a random number between a and b")]
         public async Task Roll(int a, int b)
         {
             int output = RandomService.Next(a, b);
             await ReplyAsync($"You rolled: {output}");
         }
+        
+        [Command("roll"), Priority(0)]
+        [Summary("Rolls a random number between 1 and a")]
+        public async Task Roll(int a)
+            => await this.Roll(1, a);
+        #endregion
 
         [Command("hug")]
         [Summary("Hugs another user in chat")]
