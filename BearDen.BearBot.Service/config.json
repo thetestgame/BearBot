@@ -1,0 +1,6 @@
+﻿{
+    "Service": {
+        "TotalShards": 1,
+        "MaxCacheSize": 1000
+    }    
+}

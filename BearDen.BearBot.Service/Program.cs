@@ -5,13 +5,10 @@ using System.Threading.Tasks;
 
 namespace BearDen.BearBot.Service
 {
-    /// <summary>
-    /// 
-    /// </summary>
     class Program
     {
         /// <summary>
-        /// 
+        /// Primary entry point into the BearBot service application
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>

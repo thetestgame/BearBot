@@ -15,14 +15,14 @@ namespace BearDen.BearBot.Service.Services
     /// </summary>
     public class LoggingService
     {
-        private readonly DiscordSocketClient discord;
+        private readonly DiscordShardedClient discord;
         private readonly CommandService commands;
 
         private string logDirectory { get; }
         private string logFile => Path.Combine(logDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
 
         // DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
-        public LoggingService(DiscordSocketClient discord, CommandService commands)
+        public LoggingService(DiscordShardedClient discord, CommandService commands)
         {
             this.logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
 

@@ -17,13 +17,13 @@ namespace BearDen.BearBot.Service.Services
     public class CommandHandlingService
     {
         private readonly CommandService commands;
-        private readonly DiscordSocketClient discord;
+        private readonly DiscordShardedClient discord;
         private readonly IServiceProvider services;
 
         public CommandHandlingService(IServiceProvider services)
         {
             this.commands = services.GetRequiredService<CommandService>();
-            this.discord = services.GetRequiredService<DiscordSocketClient>();
+            this.discord = services.GetRequiredService<DiscordShardedClient>();
             this.services = services;
 
             // Hook CommandExecuted to handle post-command-execution logic.
@@ -59,13 +59,8 @@ namespace BearDen.BearBot.Service.Services
             var argPos = 0;
             if (!message.HasCharPrefix('!', ref argPos) && (!message.HasMentionPrefix(this.discord.CurrentUser, ref argPos))) return;
 
-            var context = new SocketCommandContext(this.discord, message);
-            // Perform the execution of the command. In this method,
-            // the command service will perform precondition and parsing check
-            // then execute the command if one is matched.
+            var context = new ShardedCommandContext(this.discord, message);
             await this.commands.ExecuteAsync(context, argPos, this.services);
-            // Note that normally a result will be returned by this format, but here
-            // we will handle the result in CommandExecutedAsync,
         }
 
         /// <summary>

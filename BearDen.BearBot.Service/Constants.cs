@@ -12,5 +12,10 @@ namespace BearDen.BearBot.Service
         /// Environment variable keyname used to define the Discord bot token
         /// </summary>
         public const string BotTokenEnvironmentKey = "BOT_TOKEN";
+
+        /// <summary>
+        /// Constant variable for the bot's current version
+        /// </summary>
+        public const string BotVersion = "1.0.0";
     }
 }
