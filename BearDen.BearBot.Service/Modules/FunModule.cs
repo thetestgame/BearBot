@@ -100,9 +100,17 @@ namespace BearDen.BearBot.Service.Modules
         [Summary("Yeets another user in chat.")]
         public async Task Yeet([Remainder] SocketGuildUser user)
         {
+            // Pick a random image prior to "yeeting" the user
+            string[] possibleImages = new string[] {
+                "https://tenor.com/view/see-ya-ya-yeet-ash-chucks-pikachu-im-sick-of-you-now-throw-gif-16987702",
+                "https://tenor.com/view/ya-yeet-yeet-cant-handle-my-yeet-big-yeet-yeet-baby-gif-18124551",
+                "https://tenor.com/view/yeet-lion-king-simba-rafiki-throw-gif-16194362"
+            };
+            string imageUrl = possibleImages[RandomService.Next(possibleImages.Length)];
+
             if (user == Context.User || user == null) // User -> Yeets -> User A Invocation
             {
-                await ReplyAsync($"{Context.User.Mention} yeets themselves.\nhttps://tenor.com/view/yeet-lion-king-simba-rafiki-throw-gif-16194362");
+                await ReplyAsync($"{Context.User.Mention} yeets themselves.\n{imageUrl}");
             }
             else if (user.Id == Context.Client.CurrentUser.Id) // User A -> Yeets -> Discord Bot Invocation
             {
@@ -110,16 +118,15 @@ namespace BearDen.BearBot.Service.Modules
                     "*Is yeeted*",
                     "Weeeeee",
                     "*Tumbles through the air*",
-                    "https://tenor.com/view/yeet-lion-king-simba-rafiki-throw-gif-16194362"
                 };
 
                 // Pick a random message and send it
                 string message = possibleMessages[RandomService.Next(possibleMessages.Length)];
-                await ReplyAsync(message);
+                await ReplyAsync($"{message} {imageUrl}");
             }
             else // Normal User A -> Yeets -> User B Invocation
             {
-                await ReplyAsync($"{Context.User.Mention} yeets {user.Mention}.\nhttps://tenor.com/view/yeet-lion-king-simba-rafiki-throw-gif-16194362");
+                await ReplyAsync($"{Context.User.Mention} yeets {user.Mention}.\n{imageUrl}");
             }
         }
 
